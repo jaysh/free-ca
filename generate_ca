@@ -1,0 +1,18 @@
+#!/bin/bash
+source .vars.sh
+
+if [ -f "$ca_key" ] || [ -f "$ca_cert" ]
+then
+	echo "CA has already been generated. Please proceed to generate certificates."
+	exit 1
+fi
+
+# Private key for the CA
+openssl genrsa -out $ca_key 4096
+
+# Public certificate for the CA
+openssl req -config $openssl_config -extensions v3_ca -new -x509 -days 1826 -key $ca_key -out $ca_cert -sha256
+
+echo
+echo "Your CA is now ready to use (certificate: $ca_cert, private key: $ca_key)"
+echo

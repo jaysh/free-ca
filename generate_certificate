@@ -1,0 +1,58 @@
+#!/bin/bash
+source .vars.sh
+
+if [ "$1" == "" ]
+then
+	echo "Usage: $0 <name> <hostname...>"
+	echo
+	echo "e.g. $0 web-server" '"*.example.com" "*.example.net"'
+	exit 1
+fi
+
+if [ ! -f "$ca_cert" ]
+then
+	echo "Please create the CA certificate first"
+	exit 2
+fi
+
+name="$1"
+shift
+hosts="$@"
+web_base="$output_directory/$name"
+web_key="$web_base.key"
+web_cert="$web_base.crt"
+
+if [ -f "$web_key" ] || [ -f "$web_cert" ]
+then
+	echo "There is already a certificate for $name. Please pick a new name, or remove the existing certificate and private key";
+	exit 3
+fi
+
+temporary_config=$(mktemp)
+cp $openssl_config $temporary_config
+echo "
+[alt_names]
+" >> $temporary_config
+
+i=1;
+for var in $hosts
+do
+	echo "DNS.$i = $var" >> $temporary_config
+	i=$(($i + 1))
+done
+
+# Private key for the web certificate
+openssl genrsa -out $web_key 4096
+
+# Signing request for the web certificate.
+csr=$(openssl req -config $temporary_config -new -key $web_key)
+
+# Sign the request with our CA. This results in a signed public web certificate.
+echo "$csr" | openssl x509 -req -days 730 -CA $ca_cert -CAcreateserial -CAkey $ca_key -out $web_cert -extensions v3_req -extfile $temporary_config -sha256
+
+rm $temporary_config
+
+echo
+echo "Your certificate is now ready to use (certificate: $web_cert, private key: $web_key)"
+echo
+

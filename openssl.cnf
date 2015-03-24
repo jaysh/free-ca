@@ -1,0 +1,28 @@
+[req_distinguished_name]
+C = US
+ST = CA
+L = Example
+O = Example
+OU = Example
+CN = example.com
+
+##################################################
+# You won't need to change anything beyond here. #
+##################################################
+
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+
+[v3_ca]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+basicConstraints = CA:TRUE
+
+[v3_req]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+basicConstraints = CA:FALSE
+
