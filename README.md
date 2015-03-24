@@ -8,7 +8,8 @@ not to be an easy task - I found that very few online tutorials make it absolute
 
 ## How to use it FreeCA
 
-1. Modify the `req_distinguished_name` of [`openssl.cnf`](#) to your liking.
+0. Clone this repository via whichever method you prefer.
+1. Modify the `req_distinguished_name` of [`openssl.cnf`](https://github.com/jaysh/free-ca/blob/master/openssl.cnf) to your liking.
 2. Create your own CA:
 
         $ ./generate_ca 
