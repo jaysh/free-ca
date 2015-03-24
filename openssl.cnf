@@ -16,9 +16,9 @@ x509_extensions = v3_req
 prompt = no
 
 [v3_ca]
-keyUsage = keyEncipherment, dataEncipherment
-extendedKeyUsage = serverAuth
 basicConstraints = CA:TRUE
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
 
 [v3_req]
 keyUsage = keyEncipherment, dataEncipherment
